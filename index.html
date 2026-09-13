@@ -265,24 +265,27 @@
        only the three foreground typographic accents are introduced here.
        The robot's mechanical assembly is directed inside robot.svg. */
     @media (prefers-reduced-motion: no-preference) {
-      .brand {
-        animation: brand-reveal .82s cubic-bezier(.16, 1, .3, 1) .08s backwards;
+      .stage.is-entering .brand {
+        will-change: transform, opacity, clip-path;
+        animation: brand-reveal 1s cubic-bezier(.16, 1, .3, 1) .12s backwards;
       }
 
-      .studio {
-        animation: studio-reveal .78s cubic-bezier(.16, 1, .3, 1) 1.18s backwards;
+      .stage.is-entering .studio {
+        will-change: transform, opacity, clip-path;
+        animation: studio-reveal .86s cubic-bezier(.16, 1, .3, 1) 1.08s backwards;
       }
 
-      .edge-line {
+      .stage.is-entering .edge-line {
         transform-origin: 50% 0;
-        animation: edge-reveal .56s cubic-bezier(.22, 1, .36, 1) .18s backwards;
+        will-change: transform, opacity;
+        animation: edge-reveal .62s cubic-bezier(.22, 1, .36, 1) .22s backwards;
       }
 
       @keyframes brand-reveal {
         from {
           opacity: 0;
           clip-path: inset(0 0 100% 0);
-          transform: translateY(14px);
+          transform: translateY(28px);
         }
       }
 
@@ -290,7 +293,7 @@
         from {
           opacity: 0;
           clip-path: inset(100% 0 0 0);
-          transform: translateY(-10px);
+          transform: translateY(22px);
         }
       }
 
@@ -307,9 +310,40 @@
 <body>
   <main class="stage" aria-label="Future Machine Robotics Studio">
     <h1 class="brand">Future Machine<sup>TM</sup></h1>
-    <img class="robot" src="asset/robot.svg" alt="White futuristic robot helmet">
+    <img class="robot" src="asset/robot.svg" data-entrance-src="asset/robot.svg" alt="White futuristic robot helmet">
     <p class="studio">Robotics Studio</p>
     <span class="edge-line" aria-hidden="true"></span>
   </main>
+  <script>
+    (() => {
+      const stage = document.querySelector('.stage');
+      const robot = document.querySelector('.robot');
+      const studio = document.querySelector('.studio');
+      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+      const playEntrance = () => {
+        if (reduceMotion.matches) return;
+
+        stage.classList.remove('is-entering');
+
+        const robotUrl = new URL(robot.dataset.entranceSrc, location.href);
+        robotUrl.searchParams.set('entrance', Date.now().toString());
+        robot.src = robotUrl.href;
+
+        // Force a fresh animation generation for reload and bfcache restores.
+        void stage.offsetWidth;
+        stage.classList.add('is-entering');
+
+        studio.addEventListener('animationend', () => {
+          stage.classList.remove('is-entering');
+        }, { once: true });
+      };
+
+      playEntrance();
+      addEventListener('pageshow', event => {
+        if (event.persisted) playEntrance();
+      });
+    })();
+  </script>
 </body>
 </html>
