@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#055bd3">
+  <meta name="description" content="Future Machine Robotics Studio">
+  <title>Future Machine™ — Robotics Studio</title>
+  <link rel="icon" type="image/svg+xml" href="asset/favicon.svg">
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #055bd3;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-width: 320px;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body {
+      color: #fff;
+      background:
+        radial-gradient(circle at 50% 46%, rgba(0, 119, 255, .48) 0%, rgba(0, 102, 235, .28) 35%, rgba(0, 73, 183, .15) 72%, rgba(0, 58, 150, .06) 100%),
+        linear-gradient(128deg, #0753bf 0%, #0069e9 48%, #0755c4 100%);
+    }
+
+    .stage {
+      position: relative;
+      width: 100vw;
+      height: 100svh;
+      min-height: 100%;
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: -15%;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse at 51% 45%, rgba(0, 127, 255, .35), transparent 54%),
+        radial-gradient(ellipse at 5% 15%, rgba(13, 72, 174, .24), transparent 44%),
+        radial-gradient(ellipse at 92% 86%, rgba(7, 63, 162, .28), transparent 45%);
+      filter: blur(28px);
+    }
+
+    .brand {
+      position: absolute;
+      top: 6.05%;
+      left: 3.45%;
+      margin: 0;
+      white-space: nowrap;
+      font-size: clamp(2.15rem, 4.92vw, 5rem);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.025em;
+      text-shadow: 0 1px 3px rgba(255, 255, 255, .25), 0 2px 5px rgba(0, 24, 68, .14);
+    }
+
+    .brand sup {
+      display: inline-block;
+      margin-left: .03em;
+      font-size: .43em;
+      line-height: 1;
+      letter-spacing: -.04em;
+      vertical-align: top;
+      transform: translateY(-.02em);
+    }
+
+    .robot {
+      position: absolute;
+      top: 13.1%;
+      left: 29.37%;
+      width: 41.35%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 2px 4px rgba(0, 20, 68, .08));
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .studio {
+      position: absolute;
+      right: 3.05%;
+      bottom: 6.45%;
+      margin: 0;
+      white-space: nowrap;
+      font-size: clamp(2rem, 4.9vw, 4.9rem);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1;
+      letter-spacing: -.035em;
+      text-shadow: 0 1px 4px rgba(0, 28, 75, .18);
+    }
+
+    .edge-line {
+      position: absolute;
+      top: 1.6%;
+      right: .48%;
+      width: 2px;
+      height: 9.8%;
+      border-radius: 2px;
+      background: rgba(202, 226, 249, .73);
+      box-shadow: 0 0 6px rgba(197, 227, 255, .16);
+    }
+
+    @media (max-aspect-ratio: 1/1) {
+      .brand {
+        top: 5.5%;
+        left: 7%;
+        font-size: clamp(2.25rem, 10vw, 4rem);
+      }
+
+      .robot {
+        top: 50%;
+        left: 50%;
+        width: min(90%, 52svh);
+        transform: translate(-50%, -50%);
+      }
+
+      .studio {
+        right: 7%;
+        bottom: 7%;
+        font-size: clamp(2.2rem, 9.5vw, 4rem);
+      }
+    }
+
+    /* ------------------------------------------------------------------
+       TABLET — landscape / near-square canvases.
+
+       Every element here is sized from viewport WIDTH, so the composition
+       degrades by aspect ratio, not by pixel width — a 1280x1024 monitor
+       fails the same way an 11" tablet does. The rule is therefore bound
+       by aspect ratio alone, with no width condition. Below ~7/5 the robot
+       (41.35vw) stops filling the stage vertically and the top anchor
+       (13.1%) leaves a hollow band between it and "Robotics Studio".
+
+       The switch is tuned to be continuous: at exactly 7/5, 58svh equals
+       41.35% of the width and 6.9svh equals 4.92vw, so nothing jumps in
+       scale at the boundary — only the robot's anchor changes.
+
+       robot.svg is 660x680, so its height is width x 1.03. The caps above
+       hold it at 54-60% of the stage height, leaving matched gaps above
+       and below it for the brand and the studio line.
+    ------------------------------------------------------------------ */
+    @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 7/5) {
+      .brand {
+        font-size: clamp(2.15rem, max(4.92vw, 6.9svh), 5rem);
+      }
+
+      .robot {
+        top: 50%;
+        left: 50%;
+        width: min(52%, 58svh);
+        transform: translate(-50%, -50%);
+      }
+
+      .studio {
+        font-size: clamp(2rem, max(4.9vw, 6.85svh), 4.9rem);
+      }
+    }
+
+    /* ------------------------------------------------------------------
+       TABLET — portrait.
+
+       The phone rule above pushes the robot to 90% width and anchors it at
+       24%, which collides with "Robotics Studio" once the stage is tall
+       (e.g. 768x1024). From ~600px of width there is room to keep the
+       original three-point composition instead: brand top-left, robot
+       centred, studio bottom-right. Sizing meets the landscape rule
+       exactly at a square viewport (both resolve to 52% width).
+    ------------------------------------------------------------------ */
+    @media (max-aspect-ratio: 1/1) and (min-width: 600px) {
+      .brand {
+        top: 5.5%;
+        left: 4.5%;
+        font-size: clamp(2.35rem, 7.4vw, 4.6rem);
+      }
+
+      .robot {
+        top: 50%;
+        left: 50%;
+        width: min(70%, 52svh);
+        transform: translate(-50%, -50%);
+      }
+
+      .studio {
+        right: 4.5%;
+        bottom: 6.5%;
+        font-size: clamp(2.15rem, 7.2vw, 4.4rem);
+      }
+    }
+
+    /* ------------------------------------------------------------------
+       MOBILE — viewport sizing (both orientations).
+
+       .stage asks for 100svh but also carries min-height: 100%, which
+       resolves through html/body against the initial containing block.
+       Mobile browsers disagree on whether that block is the small or the
+       large viewport; where it resolves large, min-height wins, the stage
+       outgrows the visible area and the document is genuinely scrollable
+       with overflow: hidden merely suppressing the bar.
+
+       Pinning the document and the stage to 100dvh removes the ambiguity.
+       Nothing scrolls, so the browser UI never retracts, so dvh never
+       changes — the usual argument against dvh does not apply to a
+       composition that fits by construction. overscroll-behavior stops the
+       rubber-band drag, which reads as a scroll even when nothing scrolls.
+    ------------------------------------------------------------------ */
+    @media (max-aspect-ratio: 1/1) and (max-width: 599.98px),
+           (min-aspect-ratio: 7/5) and (max-height: 500px) {
+      html, body {
+        height: 100dvh;
+        overscroll-behavior: none;
+      }
+
+      .stage {
+        height: 100dvh;
+        min-height: 0;
+      }
+    }
+
+    /* ------------------------------------------------------------------
+       MOBILE — landscape.
+
+       Phones on their side are the one case with no rule of their own:
+       above 7/5 they fall through to desktop, where the robot is 41.35vw
+       tall and does not fit — at 844x390 it runs 21px past the bottom of
+       the stage and is clipped. Height, not width, is the constraint, so
+       the robot and both type sizes take an svh ceiling and the
+       composition re-centres, holding the robot at 62% of the height like
+       every other mode. The type floor drops to 1.75rem because the
+       desktop floor (2.15rem) is 11% of the height on a 320px-tall stage.
+
+       Bound by max-height so tablet landscape and full-size displays are
+       untouched. At exactly 7/5 this and the tablet rule resolve the robot
+       to the same pixel bounds, so the shared edge is seamless.
+    ------------------------------------------------------------------ */
+    @media (min-aspect-ratio: 7/5) and (max-height: 500px) {
+      .brand {
+        font-size: clamp(1.75rem, min(4.92vw, 7.6svh), 5rem);
+      }
+
+      .robot {
+        top: 50%;
+        left: 50%;
+        width: min(41.35%, 60svh);
+        transform: translate(-50%, -50%);
+      }
+
+      .studio {
+        font-size: clamp(1.7rem, min(4.9vw, 7.55svh), 4.9rem);
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <main class="stage" aria-label="Future Machine Robotics Studio">
+    <h1 class="brand">Future Machine<sup>TM</sup></h1>
+    <img class="robot" src="asset/robot.svg" alt="White futuristic robot helmet">
+    <p class="studio">Robotics Studio</p>
+    <span class="edge-line" aria-hidden="true"></span>
+  </main>
+</body>
+</html>

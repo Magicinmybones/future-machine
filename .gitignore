@@ -1,0 +1,29 @@
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors and local tooling
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Dependencies and build artifacts
+node_modules/
+dist/
+.wrangler/
+
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+
+# Logs, temporary files, and local archives
+*.log
+*.tmp
+*.temp
+*.bak
+*.zip
